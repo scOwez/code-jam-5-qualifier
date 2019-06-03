@@ -1,5 +1,4 @@
 import random
-import re
 
 def generate_password(
     password_length: int = 1000000,
