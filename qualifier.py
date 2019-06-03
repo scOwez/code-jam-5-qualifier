@@ -1,4 +1,5 @@
 import random
+import re
 
 def generate_password(
     password_length: int = 1000000,
@@ -20,11 +21,12 @@ def generate_password(
         raise UserWarning("Both ignored_chars & allowed_chars have been passed! Only 1 of these args are allowed.")
 
     word_dict = "abcdefghijklmnopqrstuvwxyz"
+    symbols = "#!@"
     
     if has_uppercase:
         word_dict += word_dict.upper()
     elif has_symbols:
-        word_dict += "#!@"
+        word_dict += symbols
 
     output = ""
 
@@ -39,5 +41,21 @@ def generate_password(
                 choice = random.choice(word_dict)
 
         output += choice
+
+    has_symbol = False
+    has_upper = False
+
+    for i in symbols:
+        if i in output:
+            has_symbol = True
+            break
+        elif i in word_dict.upper():
+            has_upper = True
+            break
+
+    if not has_symbol:
+        output = f"{output[:-1]}{random.choice(symbols)}"
+    elif not has_upper:
+        output = f"{output[:-2]}{random.choice(symbols)}{output[:-1]}"
 
     return output
