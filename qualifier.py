@@ -1,7 +1,7 @@
 import random
 
 def generate_password(
-    password_length: int = 1000000,
+    password_length: int = 8,
     has_symbols: bool = False,
     has_uppercase: bool = False,
     ignored_chars: list = [],
