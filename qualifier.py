@@ -1,4 +1,6 @@
+import numpy
 import random
+import string
 
 def generate_password(
     password_length: int = 8,
@@ -17,44 +19,27 @@ def generate_password(
     """
 
     if ignored_chars and allowed_chars:
-        raise UserWarning("Both ignored_chars & allowed_chars have been passed! Only 1 of these args are allowed.")
+        raise UserWarning("Both ignored_chars and allowed_chars have been passed!")
 
-    word_dict = "abcdefghijklmnopqrstuvwxyz"
-    symbols = "#!@"
+    if allowed_chars:
+        alphabet = allowed_chars
+    else:
+        alphabet = list(string.ascii_lowercase)
+
+        if has_symbols:
+            alphabet.extend(["#", "!", "@"])
+        if has_uppercase:
+            alphabet.extend(string.ascii_uppercase)
+
+    for ignored_char in ignored_chars:
+        alphabet.remove(ignored_char)
+
+    output = [random.choice(alphabet) for i in range(password_length)]
+
+    if has_symbols and ["#", "!", "@"] not in output:
+        output[-1] = random.choice(["#", "!", "@"])
     
-    if has_uppercase:
-        word_dict += word_dict.upper()
-    elif has_symbols:
-        word_dict += symbols
+    if has_uppercase and string.ascii_uppercase not in output:
+        output[-2] = random.choice(string.ascii_uppercase)
 
-    output = ""
-
-    for i in range(password_length):
-        choice = random.choice(word_dict)
-
-        if allowed_chars:
-            while choice in ignored_chars or choice not in allowed_chars:
-                choice = random.choice(word_dict)
-        else:
-            while choice in ignored_chars:
-                choice = random.choice(word_dict)
-
-        output += choice
-
-    has_symbol = False
-    has_upper = False
-
-    for i in symbols:
-        if i in output:
-            has_symbol = True
-            break
-        elif i in word_dict.upper():
-            has_upper = True
-            break
-
-    if not has_symbol:
-        output = f"{output[:-1]}{random.choice(symbols)}"
-    elif not has_upper:
-        output = f"{output[:-2]}{random.choice(symbols)}{output[:-1]}"
-
-    return output
+    return "".join(output)
